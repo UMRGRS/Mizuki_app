@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meseros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    {%include "Mizuki_app/header.html"%}
+    <div class="container-fluid">
+        <div class="row mx-1">
+            <div class="col-7">
+                <h1 class="my-2 mx-3">Menu</h1>
+                <div class="container" id="menu-area">
+                    {% for cat, prods in all_products.items %}
+                    <p class="fs-4 mb-2 ms-1">{{cat}}</p>
+                        {% for prod in prods %}
+                        <div class="card mb-2">
+                            <div class="card-body row align-items-center">
+                                <div class="col-lg-4">
+                                    <h5 class="card-title">{{prod.name}}</h5>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p class="card-text">${{prod.price}}</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <form method="post" action="{% url 'Mizuki_app:add_prod'%}">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input type="number" min="1" class="form-control" name="Quantity" placeholder="cantidad" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <button type="submit" name="add_prod" value={{prod.id}} class="btn btn-primary">Añadir</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}  
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-5">
+                <h1 class="my-2 mx-3">Pedido</h1>
+                <div class="container" id="order-area">
+                    {%if request.session.added_products != None %}
+                        {% for item in request.session.added_products%}
+                            <div class="card mb-2">
+                                <div class="card-body row align-items-center">
+                                    <div class="col-lg-3">
+                                        <h5 class="card-title">{{item.name}}</h5>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <p class="card-text">${{item.price}} por pieza</p>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <p class="card-text">Piezas: {{item.quantity}}</p>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <form method="post" action="{% url 'Mizuki_app:del_prod'%}">
+                                            {% csrf_token %}
+                                            <button type="submit" name="Del_prod" value="{{item.id}}" class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="card mb-2">
+                        <div class="card-body row align-items-center">
+                            <div class="col-lg-12">
+                                <p class="card-text">Añade productos para verlos aquí</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="container px-4">
+                    <form method="post" action="{% url 'Mizuki_app:place_order'%}" class="row">
+                        {% csrf_token %}
+                        <input type="number" min="1" name="table" class="form-control mb-2" placeholder="#Mesa" required>
+                        <input type="submit" class="btn btn-primary mb-2" name="place" value="Hacer pedido">
+                    </form>
+                </div>
+                <div class="container px-4">
+                    <form method="post" action="{% url 'Mizuki_app:cancel_order'%}" class="row">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-danger" name="cancel" value="Cancelar">
+                    </form>
+                </div>
+                {% if message %}
+                    <h1 class="ms-3 mt-4 fs-3">{{message}}</h1>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
