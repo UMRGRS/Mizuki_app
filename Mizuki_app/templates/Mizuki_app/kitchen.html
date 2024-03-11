@@ -19,6 +19,7 @@
       <div class="col-12">
         <div class="container-fluid">
           <!--Use a loop for every order-->
+          {%if orders%}
           {% for order in orders %}
           <div class="card mb-2">
             <div class="card-body row align-items-center">
@@ -26,7 +27,7 @@
                 <h5 class="card-title">Orden #{{order.id}}</h5>
               </div>
               <div class="col-sm-4">
-                <p class="card-text">{{order.table}}</p>
+                <p class="card-text">Mesa: {{order.table}}</p>
               </div>
               <div class="col-sm-4">
                 <form method="post" action="{% url 'Mizuki_app:complete_order' order.id%}">
@@ -42,6 +43,11 @@
             </ul>
           </div>
           {% endfor %}
+          {% else %}
+          <div class="col-12">
+            <h1>No hay pedidos pendientes :3</h1>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>

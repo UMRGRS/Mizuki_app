@@ -16,34 +16,50 @@
             <h1 class="ps-2 py-3">Detalle</h1>
             <div class="container-fluid">
                 <!--Use a loop for every order-->
-                <div class="card mb-2">
-                    <div class="card-body row align-items-center">
-                        <div class="col-sm-6">
-                            <h5 class="card-title">Numero de orden</h5>
+                {% if order %}
+                    <div class="card mb-2">
+                        <div class="card-body row align-items-center">
+                            <div class="col-sm-6">
+                                <h5 class="card-title">Orden #{{order.id}}</h5>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="card-text">Mesa: {{order.tableNumber}}</p>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <p class="card-text">Mesa:</p>
-                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for prod in prods_list%}
+                                <li class="list-group-item">
+                                    <span class="fs-4 me-3">Producto:</span> {{prod.prod.name}} 
+                                    <span class="fs-4 mx-4">Cantidad:</span> {{prod.quantity}} 
+                                    <span class="fs-4 mx-4">Costo unitario: </span>${{prod.prod.price}} 
+                                    <span class="fs-4 mx-4">Total: </span>${{prod.total}}
+                                    <form method="post" action="{% url 'Mizuki_app:deleteOrderProduct' prod.detail_id%}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Producto/cantidad</li>
-                        <li class="list-group-item">Producto/cantidad</li>
-                        <li class="list-group-item">Producto/cantidad</li>
-                    </ul>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
     <footer class="container-fluid mt-auto bg-black">
         <div class="row text-light align-items-center m-2">
             <div class="col-lg-6">
-                <h1>Total:</h1>
+                <h1>Total: ${{order_total}}</h1>
             </div>
-            <div class="col-lg-6">
-                <form method="post" action="">
+            <div class="col-lg-3">
+                <form method="post" action="{% url 'Mizuki_app:paymentDone' order.id%}">
                     {% csrf_token %}
                     <input type="submit" class="btn btn-success" name="add" value="Cobrar">
-                    <input type="submit" class="btn btn-danger ms-5" name="add" value="Cancelar orden">
+                </form>
+            </div>
+            <div class="col-lg-3">
+                <form method="post" action="{% url 'Mizuki_app:payOrDelete' order.id%}">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-danger ms-5" name="remove_order" value="Cancelar orden">
                 </form>
             </div>
         </div>

@@ -25,7 +25,7 @@ class Order(models.Model):
         self.waitingPayment = True
     
     def SetCompleted(self):
-        self.completed = True
+        self.complete = True
         
     def __str__(self):
         return(f'{self.tableNumber}')
